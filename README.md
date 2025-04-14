@@ -1,101 +1,80 @@
-### **Description of the Code**
+# 📦 End-to-End Learning of Sensing Matrices for Sparse Signal Recovery via Bilevel Optimization
 
-The provided code is a Python implementation for **signal compression and recovery** using techniques like **Compressed Sensing (CS)**, **Lasso regression**, and **learned sensing matrices**. It incorporates advanced optimization methods, regularization techniques, and evaluation metrics to ensure efficient signal reconstruction with minimal loss.
+This repository provides a complete pipeline for **compressed sensing** and **sparse signal recovery**, combining the power of **Lasso regression**, **learned sensing matrices**, and **bilevel optimization** (HOAG). The project is based on the M.Tech thesis work titled:
 
----
-
-### **Key Components**
-
-#### **1. Signal Compression and Reconstruction**
-- **Compressed Sensing Framework**:
-  - Signals are compressed using sensing matrices (Gaussian and learned).
-  - Reconstruction is performed using Lasso regression ($$ \ell_1 $$-minimization) and optimization algorithms.
-  - The `L1Lasso` function implements sparse recovery via Lasso regression.
-
-#### **2. Dataset Handling**
-- **SparseSignalsDataset**:
-  - A custom `Dataset` class loads sparse signal data from `.npy` files.
-  - Signals are represented as column vectors for training and testing.
-- **DataLoader**:
-  - Used to batch signals for efficient training and evaluation.
-
-#### **3. Sensing Matrices**
-- **Gaussian Sensing Matrix**:
-  - Randomly initialized matrix used for traditional CS-based compression.
-- **Learned Sensing Matrix**:
-  - Optimized during training to improve reconstruction quality.
-
-#### **4. Optimization Techniques**
-- **Inner Optimization**:
-  - Uses `torch.optim.LBFGS` to minimize reconstruction loss with regularization.
-- **Outer Optimization (Hoag Algorithm)**:
-  - Implements bilevel optimization to learn sensing matrix parameters and regularizer weights simultaneously.
-
-#### **5. Regularization**
-- **SmoothL1Regularizer**:
-  - Applies smooth $$ \ell_1 $$-regularization to enhance sparsity during reconstruction.
-  - Parameters ($$ \sigma $$, $$ \lambda_0 $$) are learned during training.
-
-#### **6. Evaluation Metrics**
-- **Normalized Mean Squared Error (NMSE)**:
-  - Measures reconstruction accuracy:  
-    $$
-    \text{NMSE} = \frac{\|x_{\text{true}} - x_{\text{reconstructed}}\|^2}{\|x_{\text{true}}\|^2}
-    $$
-- **Support Recovery Ratio**:
-  - Evaluates how well the reconstructed signal matches the sparsity pattern of the true signal.
-
-#### **7. Training Process**
-- The sensing matrix and regularizer parameters are optimized over multiple epochs using Adam optimizer with learning rate scheduling (`ReduceLROnPlateau`).
-- Loss histories for NMSE and support recovery are tracked for both training and testing datasets.
-
-#### **8. Visualization**
-- Plots include:
-  - NMSE loss per epoch for learned and Gaussian sensing matrices.
-  - Support recovery ratios per epoch.
-  - True vs reconstructed signals for individual samples.
+> _"End-to-End Learning of Sensing Matrices and Reconstruction via Bilevel Optimization"_  
+> by **Punkit Kumar**, under the guidance of **Prof. Subhadip Mukherjee**, IIT Kharagpur.
 
 ---
 
-### **Workflow**
+## 📌 Abstract
 
-1. **Initialization**:
-   - Load sparse signal datasets.
-   - Define Gaussian sensing matrix and initialize learned sensing matrix.
+Traditional compressed sensing uses fixed random matrices (like Gaussian), which are suboptimal when signal structures vary across datasets. This project introduces an **end-to-end bilevel learning framework** that:
 
-2. **Training**:
-   - Optimize learned sensing matrix parameters using bilevel optimization (Hoag algorithm).
-   - Evaluate NMSE loss and support recovery ratio on training data.
+- **Learns the sensing matrix A**
+- **Learns smooth $\ell_1$ regularization parameters**
+- **Improves both reconstruction accuracy and support recovery**
 
-3. **Testing**:
-   - Apply learned sensing matrix on test data.
-   - Compare performance with Gaussian sensing matrix using metrics like NMSE and support recovery ratio.
-
-4. **Visualization**:
-   - Generate plots to compare reconstruction quality across epochs and methods.
+By leveraging the **HOAG algorithm**, the model differentiates through the reconstruction process to optimize the sensing matrix for any given data distribution.
 
 ---
 
-### **Innovative Features**
-1. **Bilevel Optimization**:
-   - Simultaneously tunes sensing matrix parameters and regularizer weights for optimal reconstruction performance.
-2. **Smooth $$ \ell_1 $$-Regularization**:
-   - Ensures sparsity while maintaining numerical stability during optimization.
-3. **Comparison of Methods**:
-   - Evaluates both Gaussian sensing matrices (traditional CS) and learned sensing matrices (adaptive approach).
+## 🧠 Key Concepts
+
+- **Compressed Sensing (CS)**: Reconstruct sparse signals from fewer measurements than traditional Nyquist sampling.
+- **Bilevel Optimization**: Nested learning framework optimizing both sensing matrix and recovery parameters.
+- **Smooth $\ell_1$ Regularization**: Ensures stable, differentiable sparsity enforcement.
+- **HOAG Algorithm**: Efficient approximation-based hyperparameter optimizer.
+- **Signal Reconstruction**: Lasso-based and learned approaches for high-fidelity signal recovery.
 
 ---
 
-### Example Outputs
-| Method                  | NMSE (Train) | NMSE (Test) | Support Recovery |
-|-------------------------|--------------|-------------|------------------|
-| Gaussian Sensing Matrix | $$0.05$$     | $$0.07$$     | $$85\%$$         |
-| Learned Sensing Matrix  | $$0.02$$     | $$0.03$$     | $$95\%$$         |
+## 🚀 Features
 
-This code provides a robust framework for compressing signals efficiently while ensuring high-quality reconstruction, making it suitable for applications in biomedical signal processing, IoT, or embedded systems.
-
-Citations:
-[1] https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/50546239/19aebc93-f3c6-4bb2-8f09-8b43059a0c34/mtpf-v1-5.ipynb
+- ✅ End-to-end learning of sensing matrices
+- ✅ Sparse recovery using Lasso and Smooth $\ell_1$-regularized solvers
+- ✅ Bilevel optimization using the HOAG algorithm
+- ✅ Metrics: **Normalized Mean Squared Error (NMSE)** and **Support Recovery Ratio**
+- ✅ Gaussian vs Learned matrix comparison
+- ✅ PyTorch-powered implementation
+- ✅ Visualizations of signal recovery and training performance
 
 ---
-Answer from Perplexity: pplx.ai/share
+
+## 📈 Evaluation Results
+
+**Performance at Different Compression Levels:**
+
+| Compression (m) | NMSE (Learned) | NMSE (Gaussian) | Support (Learned) | Support (Gaussian) |
+|-----------------|----------------|------------------|-------------------|---------------------|
+| m = 15          | 0.646          | 0.760            | 0.337             | 0.298               |
+| m = 25          | 0.238          | 0.270            | 0.605             | 0.577               |
+| m = 40          | 0.002          | 0.005            | 0.980             | 0.980               |
+
+---
+
+## 📉 Metrics
+
+### 🔹 Normalized Mean Squared Error (NMSE)
+Measures reconstruction fidelity:
+
+$$
+\text{NMSE} = \frac{\|x_{\text{true}} - x_{\text{reconstructed}}\|^2}{\|x_{\text{true}}\|^2}
+$$
+
+### 🔹 Support Recovery
+How well the non-zero positions in the sparse signal are recovered:
+
+$$
+\text{Support} = \frac{|S_{\text{true}} \cap S_{\text{recovered}}|}{|S_{\text{true}}|}
+$$
+
+---
+
+## 🧪 How to Run
+
+### 🔧 Installation
+
+```bash
+git clone https://github.com/your-username/signal-compression-bilevel.git
+cd signal-compression-bilevel
