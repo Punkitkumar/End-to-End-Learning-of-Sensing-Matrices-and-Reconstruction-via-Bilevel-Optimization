@@ -76,5 +76,6 @@ $$
 ### 🔧 Installation
 
 ```bash
-git clone https://github.com/your-username/signal-compression-bilevel.git
-cd signal-compression-bilevel
+git clone https://github.com/Punkitkumar/End-to-End-Learning-of-Sensing-Matrices-and-Reconstruction-via-Bilevel-Optimization.git
+cd End-to-End-Learning-of-Sensing-Matrices-and-Reconstruction-via-Bilevel-Optimization
+!python MTP.py
