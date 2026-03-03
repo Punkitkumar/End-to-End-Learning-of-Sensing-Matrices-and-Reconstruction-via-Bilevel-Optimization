@@ -5,17 +5,17 @@ M = 15             # Sensing matrix rows (measurements)
 N = 100            # Signal length (features)
 
 # --- Training Hyperparameters ---
-BATCH_SIZE = 64
+BATCH_SIZE = 1248
 MAX_EPOCHS = 100
 LEARNING_RATE_A = 0.1
 LEARNING_RATE_REG = 0.001
 WEIGHT_DECAY = 1e-2
 
 # --- Dataset Settings ---
-TRAIN_DATA_PATH = 'sparse_signal_n100/sparse_signals_dataset_10000.npy'
-TEST_DATA_PATH = 'sparse_signal_n100/sparse_signals_dataset_1000.npy'
-TRAIN_SAMPLES = 4500
-TEST_SAMPLES = 1000
+TRAIN_DATA_PATH = 'sparse_signal_n100/sparse_signals_dataset_100000.npy'
+TEST_DATA_PATH = 'sparse_signal_n100/sparse_signals_dataset_10000.npy'
+TRAIN_SAMPLES = 100000
+TEST_SAMPLES = 10000
 
 # --- Inner Optimization (LBFGS) Parameters ---
 LBFGS_LR = 0.1
