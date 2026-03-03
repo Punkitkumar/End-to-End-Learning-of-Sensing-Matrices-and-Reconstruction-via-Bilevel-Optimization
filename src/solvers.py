@@ -1,10 +1,10 @@
 import torch
-import math
+from config import LASSO_ALPHA_EVAL, LASSO_TOL, LASSO_MAX_ITER
 
 def soft_thresholding(x, threshold):
     return torch.sign(x) * torch.clamp(torch.abs(x) - threshold, min=0)
 
-def L1Lasso(A, Y, alpha=2.812e-01, tol=1e-4, max_iter=1000):
+def L1Lasso(A, Y, alpha=LASSO_ALPHA_EVAL, tol=LASSO_TOL, max_iter=LASSO_MAX_ITER):
     """
     PyTorch-based FISTA (Fast Iterative Soft Thresholding Algorithm) for GPU-accelerated Lasso.
     A: [m, n], Y: [m, batch]

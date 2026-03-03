@@ -30,13 +30,13 @@ def inner_loss(Y, A, x_hat, regularizer):
     regularizer_term = regularizer(x_hat)
     return (loss1 + regularizer_term).mean()
 
-def inner_optimization(x_hat, Y, A, regularizer, tol=1e-9, max_iter=500):
+def inner_optimization(x_hat, Y, A, regularizer, lr=0.1, tol_grad=1e-8, tol_chg=1e-10, max_iter=500):
     recons_x = x_hat.clone().detach().requires_grad_(True)
     optimizer = optim.LBFGS([recons_x], 
-                      lr=0.1,
+                      lr=lr,
                       line_search_fn='strong_wolfe',  
-                      tolerance_grad=1e-8,  
-                      tolerance_change=1e-10)
+                      tolerance_grad=tol_grad,  
+                      tolerance_change=tol_chg)
 
     def closure():
         optimizer.zero_grad()
@@ -47,7 +47,8 @@ def inner_optimization(x_hat, Y, A, regularizer, tol=1e-9, max_iter=500):
     optimizer.step(closure)
     return recons_x
 
-def hoag_algorithm(x_hat, x_true, A, regularizer, outer_loss_fn, device, k=1.0, epsilon=1e-8):
+def hoag_algorithm(x_hat, x_true, A, regularizer, outer_loss_fn, device, k=1.0, epsilon=1e-8, 
+                   lbfgs_lr=0.1, lbfgs_tol_grad=1e-8, lbfgs_tol_chg=1e-10):
     """
     Optimized HOAG using direct linear solve for the inverse Hessian-vector product.
     """
@@ -55,7 +56,8 @@ def hoag_algorithm(x_hat, x_true, A, regularizer, outer_loss_fn, device, k=1.0, 
     batch_size = x_true.shape[1]
     
     # 1. Inner Optimization
-    recons_x = inner_optimization(x_hat=x_hat, Y=Y, A=A, regularizer=regularizer, tol=epsilon)
+    recons_x = inner_optimization(x_hat=x_hat, Y=Y, A=A, regularizer=regularizer, 
+                                  lr=lbfgs_lr, tol_grad=lbfgs_tol_grad, tol_chg=lbfgs_tol_chg)
     x_hat_final = recons_x.detach().requires_grad_(True)
     
     # 2. Compute Outer Gradient wrt x

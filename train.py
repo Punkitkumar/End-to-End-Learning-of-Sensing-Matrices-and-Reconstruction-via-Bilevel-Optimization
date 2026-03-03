@@ -128,7 +128,11 @@ def train(resume_path=None):
                 regularizer=regularizer,
                 outer_loss_fn=outer_loss_fn,
                 device=DEVICE,
-                epsilon=HOAG_EPSILON
+                k=HOAG_K,
+                epsilon=HOAG_EPSILON,
+                lbfgs_lr=LBFGS_LR,
+                lbfgs_tol_grad=LBFGS_TOL_GRAD,
+                lbfgs_tol_chg=LBFGS_TOL_CHG
             )
 
             grad_A, grad_sigma, grad_lambda0, grad_W, L, loss, x_hat = grads
@@ -149,8 +153,10 @@ def train(resume_path=None):
             total_support_loss += support_loss_batch
 
             train_loader_tqdm.set_postfix({
-                'Outer Loss': f"{loss:.4e}",
-                'Avg NMSE': f"{running_nmse_loss/total_train_samples:.4e}"
+                'Loss': f"{loss:.3e}",
+                'T-NMSE': f"{running_nmse_loss/total_train_samples:.3e}",
+                'σ': f"{regularizer.sigma.item():.3f}",
+                'λ': f"{regularizer.lambda0.item():.3e}"
             })
 
         avg_train_nmse = running_nmse_loss / total_train_samples
@@ -174,7 +180,10 @@ def train(resume_path=None):
                 Y_test = A @ x_true_test
                 initial_est_test = torch.zeros_like(x_true_test)
 
-                x_hat_test = inner_optimization(initial_est_test, Y_test, A, regularizer, tol=HOAG_EPSILON)
+                x_hat_test = inner_optimization(
+                    initial_est_test, Y_test, A, regularizer, 
+                    lr=LBFGS_LR, tol_grad=LBFGS_TOL_GRAD, tol_chg=LBFGS_TOL_CHG, max_iter=LBFGS_MAX_ITER
+                )
 
                 nmse_test, support_test = signal_recovery_eval(x_hat_test, x_true_test, DEVICE)
                 total_test_nmse += nmse_test
@@ -183,9 +192,19 @@ def train(resume_path=None):
             avg_test_nmse = total_test_nmse / total_test_samples
             avg_test_support = total_test_support / total_test_samples
 
-        print(f"\nEpoch {epoch + 1}/{MAX_EPOCHS} Summary:")
-        print(f"  Time: {epoch_elapsed:.2f}s | Train NMSE: {avg_train_nmse:.6e}")
-        print(f"  Test NMSE: {avg_test_nmse:.6e} | Test Support: {avg_test_support:.4f}")
+        # Display Structured Summary
+        print(f"\n{'='*60}")
+        print(f" Epoch {epoch + 1}/{MAX_EPOCHS} Summary".center(60))
+        print(f"{'-'*60}")
+        print(f" Metrics:      Train NMSE: {avg_train_nmse:.6e}")
+        print(f"               Test NMSE:  {avg_test_nmse:.6e}")
+        print(f"               Test Support: {avg_test_support:.4f}")
+        print(f" Parameters:   Sigma (σ): {regularizer.sigma.item():.6f}")
+        print(f"               Lambda (λ): {regularizer.lambda0.item():.6e}")
+        print(f" LRs:          Matrix A: {optimizer.param_groups[0]['lr']:.2e}")
+        print(f"               Regularizer: {optimizer.param_groups[1]['lr']:.2e}")
+        print(f" Performance:  Time: {epoch_elapsed:.2f}s")
+        print(f"{'='*60}")
 
         # 7. Checkpointing — periodic save
         if (epoch + 1) % SAVE_EVERY == 0:
@@ -197,7 +216,7 @@ def train(resume_path=None):
             best_nmse = avg_test_nmse
             best_path = os.path.join(CHECKPOINT_DIR, "best_model.pt")
             save_checkpoint(epoch + 1, A, regularizer, optimizer, scheduler, best_nmse, best_path)
-            print(f"  *** New best model (NMSE: {best_nmse:.6e}) ***")
+            print(f" ✨ NEW BEST MODEL ✨ (Test NMSE: {best_nmse:.6e})")
 
         # Always save latest checkpoint for easy resume
         latest_path = os.path.join(CHECKPOINT_DIR, "latest.pt")
