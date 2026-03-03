@@ -1,0 +1,13 @@
+torch
+torchvision
+torchinfo
+accelerate
+tqdm
+numpy
+pandas
+matplotlib
+seaborn
+scikit-learn
+pillow
+opencv-python
+ipython

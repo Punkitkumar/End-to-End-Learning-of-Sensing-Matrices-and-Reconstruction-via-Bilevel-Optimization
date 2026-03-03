@@ -20,5 +20,9 @@ HOAG_EPSILON = 1e-5
 LASSO_TOL = 1e-4
 LASSO_MAX_ITER = 1000
 
+# Checkpointing
+CHECKPOINT_DIR = 'checkpoints'
+SAVE_EVERY = 5 # Save every 5 epochs
+
 # Device configuration
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
