@@ -1,0 +1,22 @@
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Python caching
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Jupyter Notebook artifacts
+.ipynb_checkpoints
+*/.ipynb_checkpoints/*
+
+# Project specific
+checkpoints/
+*.npy
+!sparse_signal_n100/*.npy
+
+# OS specific
+.DS_Store
+Thumbs.db
